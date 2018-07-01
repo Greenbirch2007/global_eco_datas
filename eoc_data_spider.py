@@ -2,81 +2,61 @@
 
 import requests
 import re
+import pandas as pd
 
 
 
-
-# 正则解析吧，bs4还是比较烂！ 正则绝对不会失效，但是bs4文档的例子都是错的！
 
 #请求的函数
-def call_page(url):
+# def call_page(url):
+#
+#     try:
+#         response = requests.get(url)
+#         response.encoding = 'utf-8'    #响应解码
+#         if response.status_code == 200:
+#             return response.text
+#         else :
+#             return None
+#     except RequestException:
+#         return None
 
-    try:
-        response = requests.get(url)
-        response.encoding = 'utf-8'    #响应解码
-        if response.status_code == 200:
-            return response.text
-        else :
-            return None
-    except RequestException:
-        return None
+
+#解析函数  表格数据解析多进行多个空列表处理！ 然后多个列表再拼接 不能一起爬了 还要用到pandas
+# def parse_one_page(html):
+#     patt = re.compile('<td width="100">(.*?).*?<td>(.*?)</td>.*?</tr>',re.S)
+#     items = re.findall(patt,html)
+#     for i in items:
+#         print(i)
+
+
 
 
 url = 'http://www.8pu.com/country/USA/'
-html = call_page(url)
+data =pd.read_html(url)[3]
+print(data)
 
+# 表格类的数据爬取两种办法 一种是直接使用pandas的pd.read_html(url) 方法，
+#第二种是from lxml import etree   selector=etree.HTML(html)
+#设立若干空列表，分别解析后，再添加到空列表中 ，用data=pd.DataFrame  拼接成表格数据结构
+#两者都要用到padas,只是第一种完全以来pd，第二种用空列表完成主要的清晰内容，pd只是拼接而已！
+#具体问题具体分析，如果需要清晰的分类过多，超过10个还是用pd直接处理，两个都要练练！
 
-#重点用正则提出标签，空格即可
-# 整体是一个列表，但是for迭代之后就变成了45个字符串
+//*[@id="contents"]/div[1]/div[3]/table/tbody/tr[2]/td[1]
 
-# 还是要考虑用表达式整体去匹配，不能割裂然后再去拼接！ 模块处理又变成元组了
-
-def parse_one_page(html):
-    patt = re.compile('.*?<td width="100">(.*?)</td><td>(.*?)</td>',re.S)   #标题匹配,注意去除换行(没有实现去除空格，但是标签都没了)
-    items = re.findall(patt,html)
-    print(items)
-    # for i in items:
-    #     print(i)
-    # print(items)
-    # print(len(items))
-
-    # for item in items:
-    #     print((type(item)))
-
-content = parse_one_page(html)
+//*[@id="contents"]/div[1]/div[3]/table/tbody/tr[11]/td[1]
 
 
 
-
-
-
-
-
-#
+    # 得到所有单个页面链接
 # def parse_all_links(html):
 #
-#     pattern = re.compile('.*?&nbsp;<a href="(.*?)"><font>', re.S)
+#     pattern = re.compile('.*?<td>&nbsp;&nbsp;<a href="(.*?)"><font>(.*?)</font>', re.S)
 #     items = re.findall(pattern,html)
 #     for item in items:
-#         print(item)
-#
-#
-#
-# url = 'http://www.8pu.com/gdp/ranking_2017.html'
-# html = call_page(url)
-#
-# print(parse_all_links(html))
-
-
-# def parse_one_country(html):
-#     patt = re.compile()
-#     item1s =
+#         print(item[1],item[0])
 
 
 
-
-# 存储的部分，先都存到MongoDB中，等到mysql建表思路清楚，甚至数据分析的pandas，R思路清晰之后在存到关系型数据库中（第一轮主要积累爬取，清洗）
-#第二轮再到应用层面！
 
 
 
